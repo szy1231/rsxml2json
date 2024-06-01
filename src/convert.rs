@@ -17,16 +17,33 @@ impl Convert {
     }
 
     pub fn execute(&self, xml: String) -> Option<String> {
-        let doc = Document::parse(xml.as_str()).unwrap();
+        let doc_res = Document::parse(xml.as_str());
+        let doc = match doc_res {
+            Ok(data) => {data}
+            Err(err) => {
+                println!("xml format err = {}",err);
+                return None
+            }
+        };
         let root = doc.root_element();
         let mut json_string = String::new();
         convert_node_to_json(&mut json_string, root, &self.config);
         json_string = format!("{{\"{}\":{}}}",root.tag_name().name(),json_string);
-        if is_valid_json(&json_string) {
-            Some(json_string)
+
+        if self.config.validate_json_result {
+            if is_valid_json(&json_string) {
+                Some(json_string)
+            }else {
+                None
+            }
         }else {
-            None
+            if json_string.is_empty() {
+                None
+            }else {
+                Some(json_string)
+            }
         }
+
     }
 }
 
