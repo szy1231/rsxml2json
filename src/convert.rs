@@ -54,6 +54,7 @@ fn is_valid_json(s: &str) -> bool {
 fn convert_node_to_json(json_output: &mut String, current_node: Node, config: &ConvertConfig) {
     let mut element_count = 0;
     let mut child_elements_map: ChildrenMap = HashMap::new();
+    let mut child_text_falg = false;
 
     for child in current_node.children() {
         if !child.tag_name().name().is_empty() {
@@ -68,6 +69,7 @@ fn convert_node_to_json(json_output: &mut String, current_node: Node, config: &C
                 .entry("content".to_string())
                 .or_insert_with(Vec::new)
                 .push(child);
+            child_text_falg= true;
         }
     }
 
@@ -77,7 +79,7 @@ fn convert_node_to_json(json_output: &mut String, current_node: Node, config: &C
 
     for (i, attr) in current_node.attributes().enumerate() {
         json_output.push_str(&format!(r#""{}{}": "{}""#, config.attribute_prefix,attr.name(), attr.value()));
-        if element_count > 0 || i < current_node.attributes().count()  {
+        if element_count > 0 || i < current_node.attributes().count() -1 || child_text_falg {
             json_output.push_str(", ");
         }
     }

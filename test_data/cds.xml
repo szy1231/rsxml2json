@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<rdf:RDF
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:cd="http://www.recshop.fake/cd#">
+
+    <rdf:Description
+            rdf:about="http://www.recshop.fake/cd/The Money Store">
+        <cd:artist>Death Grips</cd:artist>
+        <cd:country>USA</cd:country>
+        <cd:company>Third Worlds</cd:company>
+        <cd:price>00.00</cd:price>
+        <cd:year>2012</cd:year>
+    </rdf:Description>
+
+</rdf:RDF>

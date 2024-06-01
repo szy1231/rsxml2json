@@ -1,0 +1,12 @@
+{
+  "RDF": {
+    "Description": {
+      "-about": "http://www.recshop.fake/cd/The Money Store",
+      "artist": "Death Grips",
+      "company": "Third Worlds",
+      "country": "USA",
+      "price": "00.00",
+      "year": "2012"
+    }
+  }
+}
