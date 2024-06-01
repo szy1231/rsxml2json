@@ -77,7 +77,7 @@ fn convert_node_to_json(json_output: &mut String, current_node: Node, config: &C
 
     for (i, attr) in current_node.attributes().enumerate() {
         json_output.push_str(&format!(r#""{}{}": "{}""#, config.attribute_prefix,attr.name(), attr.value()));
-        if element_count > 0 || i < current_node.attributes().count() - 1 {
+        if element_count > 0 || i < current_node.attributes().count()  {
             json_output.push_str(", ");
         }
     }
@@ -111,7 +111,7 @@ fn convert_node_to_json(json_output: &mut String, current_node: Node, config: &C
 
     if element_count > 0 || current_node.attributes().count() > 0 {
         json_output.push_str("}");
-    } else if !current_node.tag_name().name().is_empty()
+    } else if current_node.tag_name().name().is_empty()
         && current_node.text().unwrap_or("").trim().len() > 0
     {
         json_output.push_str(&format!(
