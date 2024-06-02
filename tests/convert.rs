@@ -1,3 +1,4 @@
+extern crate rsxml2json;
 use rsxml2json::{Convert, ConvertConfig};
 use std::{fs::File, io::Read, path::Path};
 

@@ -1,12 +1,12 @@
 use crate::config::ConvertConfig;
-use roxmltree::{Document, Node};
+extern crate roxmltree;
 use std::{collections::HashMap, error::Error};
 
 pub struct Convert {
     config: ConvertConfig,
 }
 
-type ChildrenMap<'a, 'input> = HashMap<String, Vec<Node<'a, 'input>>>;
+type ChildrenMap<'a, 'input> = HashMap<String, Vec<roxmltree::Node<'a, 'input>>>;
 
 struct ConversionError;
 
@@ -33,7 +33,7 @@ impl Convert {
         if xml.is_empty() {
             return Ok("".to_string());
         }
-        let doc = Document::parse(xml.as_str())?;
+        let doc = roxmltree::Document::parse(xml.as_str())?;
         let root = doc.root_element();
         let mut json_string = String::new();
         convert_node_to_json(&mut json_string, root, &self.config);
@@ -46,7 +46,11 @@ impl Convert {
     }
 }
 
-fn convert_node_to_json(json_output: &mut String, current_node: Node, config: &ConvertConfig) {
+fn convert_node_to_json(
+    json_output: &mut String,
+    current_node: roxmltree::Node,
+    config: &ConvertConfig,
+) {
     let mut element_count = 0;
     let mut child_elements_map: ChildrenMap = HashMap::new();
     let mut child_text_flag = false;

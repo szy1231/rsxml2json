@@ -1,5 +1,7 @@
 use rsxml2json::{Convert, ConvertConfig};
-use serde_json::{to_string_pretty, Value};
+
+extern crate rsxml2json;
+extern crate serde_json;
 
 fn main() {
     let conf = ConvertConfig::default();
@@ -14,7 +16,9 @@ fn main() {
         }
     };
 
-    let parsed_json: Value = serde_json::from_str(json_str.as_str()).expect("Unable to parse JSON");
-    let pretty_json = to_string_pretty(&parsed_json).expect("Unable to convert to pretty JSON");
+    let parsed_json: serde_json::Value =
+        serde_json::from_str(json_str.as_str()).expect("Unable to parse JSON");
+    let pretty_json =
+        serde_json::to_string_pretty(&parsed_json).expect("Unable to convert to pretty JSON");
     println!("{}", pretty_json);
 }
