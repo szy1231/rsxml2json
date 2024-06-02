@@ -9,9 +9,9 @@ fn main() {
     let json_str = match json_option {
         Ok(value) => value,
         Err(err) => {
-            println!("err = {:?}",err);
+            println!("err = {:?}", err);
             return;
-        },
+        }
     };
 
     let parsed_json: Value = serde_json::from_str(json_str.as_str()).expect("Unable to parse JSON");
