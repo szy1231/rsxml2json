@@ -76,8 +76,8 @@ fn convert_node_to_json(json_output: &mut String, current_node: Node, config: &C
         json_output.push_str(&format!(
             r#""{}{}": "{}""#,
             config.attribute_prefix,
-            attr.name(),
-            attr.value()
+            replace_undesired_chars(attr.name()),
+            replace_undesired_chars(attr.value())
         ));
         if element_count > 0 || i < current_node.attributes().count() - 1 || child_text_flag {
             json_output.push_str(", ");
@@ -87,7 +87,7 @@ fn convert_node_to_json(json_output: &mut String, current_node: Node, config: &C
     let mut i = 0;
     for (key, children) in &child_elements_map {
         if !key.eq("content") {
-            json_output.push_str(&format!(r#""{}": "#, key));
+            json_output.push_str(&format!(r#""{}": "#, replace_undesired_chars(key)));
         } else if element_count > 1 || current_node.attributes().count() > 0 {
             json_output.push_str(&format!(r#""{}content": "#, config.content_prefix));
         }
@@ -118,7 +118,16 @@ fn convert_node_to_json(json_output: &mut String, current_node: Node, config: &C
     {
         json_output.push_str(&format!(
             r#""{}""#,
-            current_node.text().unwrap_or("").trim()
+            replace_undesired_chars(current_node.text().unwrap_or("").trim())
         ));
     }
+}
+
+fn replace_undesired_chars(input: &str) -> String {
+    input
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("\t", "\\t")
+        .replace("\"", "\\\"")
+        .replace("\r", "\\r")
 }
