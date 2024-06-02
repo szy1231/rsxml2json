@@ -9,14 +9,17 @@ pub struct ConvertConfig {
 }
 
 impl ConvertConfig {
-    pub fn init(attribute_prefix: Option<String>, content_prefix: Option<String>,validate_json_result: Option<bool>) -> Self {
+    pub fn init(
+        attribute_prefix: String,
+        content_prefix: String,
+        validate_json_result: bool,
+    ) -> Self {
         Self {
-            attribute_prefix: attribute_prefix.unwrap_or_else(|| ATTR_PREFIX.into()),
-            content_prefix: content_prefix.unwrap_or_else(|| CONTENT_PREFIX.into()),
-            validate_json_result:validate_json_result.unwrap_or_else(|| true),
+            attribute_prefix,
+            content_prefix,
+            validate_json_result,
         }
     }
-    
 }
 
 impl Default for ConvertConfig {
@@ -24,7 +27,7 @@ impl Default for ConvertConfig {
         ConvertConfig {
             attribute_prefix: ATTR_PREFIX.to_string(),
             content_prefix: CONTENT_PREFIX.to_string(),
-            validate_json_result:false,
+            validate_json_result: false,
         }
     }
 }

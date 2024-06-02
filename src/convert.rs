@@ -1,7 +1,7 @@
 use crate::config::ConvertConfig;
 use roxmltree::{Document, Node};
-use std::collections::HashMap;
 use serde_json::Value;
+use std::{collections::HashMap, error::Error};
 
 pub struct Convert {
     config: ConvertConfig,
@@ -9,52 +9,57 @@ pub struct Convert {
 
 type ChildrenMap<'a, 'input> = HashMap<String, Vec<Node<'a, 'input>>>;
 
-impl Convert {
-    pub fn new(config: ConvertConfig) -> Self {
-        Self {
-            config,
-        }
-    }
+struct ConversionError;
 
-    pub fn execute(&self, xml: String) -> Option<String> {
-        let doc_res = Document::parse(xml.as_str());
-        let doc = match doc_res {
-            Ok(data) => {data}
-            Err(err) => {
-                println!("xml format err = {}",err);
-                return None
-            }
-        };
-        let root = doc.root_element();
-        let mut json_string = String::new();
-        convert_node_to_json(&mut json_string, root, &self.config);
-        json_string = format!("{{\"{}\":{}}}",root.tag_name().name(),json_string);
-
-        if self.config.validate_json_result {
-            if is_valid_json(&json_string) {
-                Some(json_string)
-            }else {
-                None
-            }
-        }else {
-            if json_string.is_empty() {
-                None
-            }else {
-                Some(json_string)
-            }
-        }
-
+impl std::fmt::Debug for ConversionError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Conversion Error")
     }
 }
 
-fn is_valid_json(s: &str) -> bool {
-    serde_json::from_str::<Value>(s).is_ok()
+impl std::fmt::Display for ConversionError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Conversion Error")
+    }
+}
+
+impl Error for ConversionError {}
+
+impl Convert {
+    pub fn new(config: ConvertConfig) -> Self {
+        Self { config }
+    }
+
+    pub fn execute(&self, xml: String) -> Result<String, Box<dyn Error>> {
+        if xml.is_empty() {
+            return Ok("".to_string());
+        }
+        let doc = Document::parse(xml.as_str())?;
+        let root = doc.root_element();
+        let mut json_string = String::new();
+        convert_node_to_json(&mut json_string, root, &self.config);
+        if json_string.is_empty() {
+            return Err(Box::new(ConversionError));
+        }
+        json_string = format!("{{\"{}\":{}}}", root.tag_name().name(), json_string);
+
+        is_valid_json(&json_string, self.config.validate_json_result)?;
+
+        Ok(json_string)
+    }
+}
+
+fn is_valid_json(s: &str, enable: bool) -> Result<(), serde_json::Error> {
+    if enable {
+        serde_json::from_str::<Value>(s)?;
+    }
+    Ok(())
 }
 
 fn convert_node_to_json(json_output: &mut String, current_node: Node, config: &ConvertConfig) {
     let mut element_count = 0;
     let mut child_elements_map: ChildrenMap = HashMap::new();
-    let mut child_text_falg = false;
+    let mut child_text_flag = false;
 
     for child in current_node.children() {
         if !child.tag_name().name().is_empty() {
@@ -69,7 +74,7 @@ fn convert_node_to_json(json_output: &mut String, current_node: Node, config: &C
                 .entry("content".to_string())
                 .or_insert_with(Vec::new)
                 .push(child);
-            child_text_falg= true;
+            child_text_flag = true;
         }
     }
 
@@ -78,8 +83,13 @@ fn convert_node_to_json(json_output: &mut String, current_node: Node, config: &C
     }
 
     for (i, attr) in current_node.attributes().enumerate() {
-        json_output.push_str(&format!(r#""{}{}": "{}""#, config.attribute_prefix,attr.name(), attr.value()));
-        if element_count > 0 || i < current_node.attributes().count() -1 || child_text_falg {
+        json_output.push_str(&format!(
+            r#""{}{}": "{}""#,
+            config.attribute_prefix,
+            attr.name(),
+            attr.value()
+        ));
+        if element_count > 0 || i < current_node.attributes().count() - 1 || child_text_flag {
             json_output.push_str(", ");
         }
     }
