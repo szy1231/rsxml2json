@@ -18,8 +18,8 @@ fn main() {
     
     let data_option = convert.execute(xml_str);
     let json_str = match data_option {
-        Some(data) => data,
-        None => {return;}
+        Ok(value) => value,
+        Err(_) => return,
     };
     
     println!("json_str = {}",json_str);

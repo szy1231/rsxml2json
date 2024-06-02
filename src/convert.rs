@@ -1,6 +1,5 @@
 use crate::config::ConvertConfig;
 use roxmltree::{Document, Node};
-use serde_json::Value;
 use std::{collections::HashMap, error::Error};
 
 pub struct Convert {
@@ -43,17 +42,8 @@ impl Convert {
         }
         json_string = format!("{{\"{}\":{}}}", root.tag_name().name(), json_string);
 
-        is_valid_json(&json_string, self.config.validate_json_result)?;
-
         Ok(json_string)
     }
-}
-
-fn is_valid_json(s: &str, enable: bool) -> Result<(), serde_json::Error> {
-    if enable {
-        serde_json::from_str::<Value>(s)?;
-    }
-    Ok(())
 }
 
 fn convert_node_to_json(json_output: &mut String, current_node: Node, config: &ConvertConfig) {

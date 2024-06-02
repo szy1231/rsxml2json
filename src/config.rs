@@ -3,21 +3,17 @@ const CONTENT_PREFIX: &str = "#";
 
 #[derive(Debug)]
 pub struct ConvertConfig {
+    // Prefix for attribute nodes
     pub attribute_prefix: String,
+    // Prefix for content text
     pub content_prefix: String,
-    pub validate_json_result: bool,
 }
 
 impl ConvertConfig {
-    pub fn init(
-        attribute_prefix: String,
-        content_prefix: String,
-        validate_json_result: bool,
-    ) -> Self {
+    pub fn init(attribute_prefix: String, content_prefix: String) -> Self {
         Self {
             attribute_prefix,
             content_prefix,
-            validate_json_result,
         }
     }
 }
@@ -27,7 +23,6 @@ impl Default for ConvertConfig {
         ConvertConfig {
             attribute_prefix: ATTR_PREFIX.to_string(),
             content_prefix: CONTENT_PREFIX.to_string(),
-            validate_json_result: false,
         }
     }
 }

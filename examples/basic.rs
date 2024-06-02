@@ -11,7 +11,7 @@ fn main() {
         Err(_) => return,
     };
 
-    let parsed_json: Value = serde_json::from_str(json_str.as_str()).expect("Unable to parse JSON");
-    let pretty_json = to_string_pretty(&parsed_json).expect("Unable to convert to pretty JSON");
-    println!("{}", pretty_json);
+        let parsed_json: Value = serde_json::from_str(json_str.as_str()).expect("Unable to parse JSON");
+        let pretty_json = to_string_pretty(&parsed_json).expect("Unable to convert to pretty JSON");
+        println!("{}", pretty_json);
 }
