@@ -1,6 +1,6 @@
 [package]
 name = "rsxml2json"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["pasiyu <pasiyu0814@gmail.com>"]
 description = "A Rust library for converting XML to JSON format"
 repository = "https://github.com/szy1231/rsxml2json"
