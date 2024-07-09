@@ -126,3 +126,48 @@ fn convert_test_data_xsd() {
 
     assert!(!convert.execute(xml_input).is_err());
 }
+
+#[test]
+fn convert_test_data_numerical_to_json() {
+    let config = ConvertConfig {
+        attribute_prefix: "-".to_string(),
+        content_prefix: "#".to_string(),
+    };
+    let convert = Convert::new(config);
+
+    let xml_input = load_xml("tests/data/numerical.xml"); // Invalid XML
+
+    assert!(!convert.execute_json(xml_input).is_err());
+}
+
+#[test]
+fn convert_test_data_xsd_to_json() {
+    let config = ConvertConfig {
+        attribute_prefix: "-".to_string(),
+        content_prefix: "#".to_string(),
+    };
+    let convert = Convert::new(config);
+
+    let xml_input = load_xml("tests/data/xsd.xml"); // Invalid XML
+
+    assert!(!convert.execute_json(xml_input).is_err());
+}
+
+#[test]
+fn convert_escape_chars_xml() {
+    let config = ConvertConfig {
+        attribute_prefix: "-".to_string(),
+        content_prefix: "#".to_string(),
+    };
+    let convert = Convert::new(config);
+
+    let xml_input = r#"<note>
+  <to>Tove \" Family</to>
+  <from>Jani &lt;The \\ Friend&gt;</from>
+  <heading>Reminder</heading>
+  <body>Don't forget me this weekend! \\ copy; 2023</body>
+</note>"#
+        .to_string();
+
+    assert!(!convert.execute_json(xml_input).is_err());
+}

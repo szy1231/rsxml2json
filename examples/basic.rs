@@ -6,19 +6,28 @@ extern crate serde_json;
 fn main() {
     let conf = ConvertConfig::default();
     let convert = Convert::new(conf);
-    let json_option = convert
-        .execute(r#"<?xml version="1.0" encoding="UTF-8"?><hello>world</hello>"#.to_string());
-    let json_str = match json_option {
-        Ok(value) => value,
-        Err(err) => {
-            println!("err = {:?}", err);
-            return;
-        }
-    };
 
-    let parsed_json: serde_json::Value =
-        serde_json::from_str(json_str.as_str()).expect("Unable to parse JSON");
-    let pretty_json =
-        serde_json::to_string_pretty(&parsed_json).expect("Unable to convert to pretty JSON");
-    println!("{}", pretty_json);
+    let xml_string = r#"<?xml version="1.0" encoding="UTF-8"?><hello>world</hello>"#;
+
+    // Example 1: Using execute to return a String
+    match convert.execute(xml_string.to_string()) {
+        Ok(json_str) => {
+            println!("JSON String: {}", json_str);
+        }
+        Err(err) => {
+            println!("Error: {:?}", err);
+        }
+    }
+
+    // Example 2: Using execute_json to return serde_json::Value
+    match convert.execute_json(xml_string.to_string()) {
+        Ok(json_value) => {
+            let pretty_json = serde_json::to_string_pretty(&json_value)
+                .expect("Unable to convert to pretty JSON");
+            println!("Pretty JSON:\n{}", pretty_json);
+        }
+        Err(err) => {
+            println!("Error: {:?}", err);
+        }
+    }
 }
