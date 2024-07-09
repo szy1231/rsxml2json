@@ -3,6 +3,7 @@ use rsxml2json::{Convert, ConvertConfig};
 extern crate rsxml2json;
 extern crate serde_json;
 
+
 fn main() {
     let conf = ConvertConfig::default();
     let convert = Convert::new(conf);
